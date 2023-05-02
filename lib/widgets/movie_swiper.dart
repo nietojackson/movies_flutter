@@ -58,8 +58,10 @@ class _MovieSwiperState extends State<MovieSwiper> {
               controller: scrollController,
               scrollDirection: Axis.horizontal,
               itemCount: widget.movies.length,
-              itemBuilder: (_, int index) =>
-                  _MoviePoster(movie: widget.movies[index]),
+              itemBuilder: (_, int index) => _MoviePoster(
+                movie: widget.movies[index],
+                heroid: '${widget.title}-${index}-${widget.movies[index].id}',
+              ),
             ),
           )
         ],
@@ -70,13 +72,18 @@ class _MovieSwiperState extends State<MovieSwiper> {
 
 class _MoviePoster extends StatelessWidget {
   final Movie movie;
+  final String heroid;
+
   const _MoviePoster({
     Key? key,
     required this.movie,
+    required this.heroid,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    movie.heroId = heroid;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
       width: 130,
@@ -86,14 +93,17 @@ class _MoviePoster extends StatelessWidget {
           GestureDetector(
             onTap: () =>
                 Navigator.pushNamed(context, 'details', arguments: movie),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: FadeInImage(
-                placeholder: const AssetImage('assets/no-image.jpg'),
-                image: NetworkImage(movie.fullPosterImg),
-                width: 130,
-                height: 190,
-                fit: BoxFit.cover,
+            child: Hero(
+              tag: movie.heroId!,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: FadeInImage(
+                  placeholder: const AssetImage('assets/no-image.jpg'),
+                  image: NetworkImage(movie.fullPosterImg),
+                  width: 130,
+                  height: 190,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
